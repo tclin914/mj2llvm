@@ -18,4 +18,7 @@ class HelloWorld {
         System.out.println("Hello World!!!\n"); // Comment
         /* Second comment */
     }
+    public void function(int i, int j) {
+        return i + j + 999;
+    }
 }
