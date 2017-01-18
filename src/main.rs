@@ -57,4 +57,5 @@ fn main() {
             }
         },
     }
+    tokenize(s.as_str());
 }
