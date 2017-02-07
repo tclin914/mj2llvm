@@ -4,6 +4,7 @@ extern crate docopt;
 extern crate regex;
 
 mod lexer;
+mod parser;
 
 use docopt::Docopt;
 use std::error::Error;
@@ -11,6 +12,7 @@ use std::fs::File;
 use std::io::Read;
 
 use lexer::*;
+use parser::*;
 
 const USAGE: &'static str = "
 Usage: 
@@ -57,5 +59,6 @@ fn main() {
             }
         },
     }
-    tokenize(s.as_str());
+    let tokens = tokenize(s.as_str());
+    parse(tokens);
 }

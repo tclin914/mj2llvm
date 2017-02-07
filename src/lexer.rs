@@ -1,5 +1,6 @@
 use regex::Regex;
 
+#[derive(PartialEq, Clone, Debug)]
 pub enum Token {
     Class,
     Public,

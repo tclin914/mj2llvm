@@ -1,0 +1,879 @@
+#![feature(prelude_import)]
+#![no_std]
+#[prelude_import]
+use std::prelude::v1::*;
+#[macro_use]
+extern crate std as std;
+extern crate rustc_serialize;
+extern crate docopt;
+
+extern crate regex;
+
+mod lexer {
+
+
+
+
+
+
+
+    use regex::Regex;
+    pub enum Token {
+        Class,
+        Public,
+        Static,
+        This,
+        New,
+        Void,
+        Main,
+        STRING,
+        Extends,
+        If,
+        Else,
+        While,
+        Return,
+        Println,
+        True,
+        False,
+        Length,
+        Int,
+        Boolean,
+        Delimiter,
+        OpBrace,
+        ClBrace,
+        OpBracket,
+        ClBracket,
+        OpParethesis,
+        ClParethesis,
+        Comma,
+        Dot,
+        And,
+        Less,
+        Add,
+        Sub,
+        Mul,
+        Not,
+        Assign,
+        Identifier(String),
+        Number(i64),
+        Text(String),
+    }
+    #[automatically_derived]
+    #[allow(unused_qualifications)]
+    impl ::std::cmp::PartialEq for Token {
+        #[inline]
+        fn eq(&self, __arg_0: &Token) -> bool {
+            {
+                let __self_vi =
+                    unsafe { ::std::intrinsics::discriminant_value(&*self) }
+                        as isize;
+                let __arg_1_vi =
+                    unsafe {
+                        ::std::intrinsics::discriminant_value(&*__arg_0)
+                    } as isize;
+                if true && __self_vi == __arg_1_vi {
+                    match (&*self, &*__arg_0) {
+                        (&Token::Identifier(ref __self_0),
+                         &Token::Identifier(ref __arg_1_0)) =>
+                        true && (*__self_0) == (*__arg_1_0),
+                        (&Token::Number(ref __self_0),
+                         &Token::Number(ref __arg_1_0)) =>
+                        true && (*__self_0) == (*__arg_1_0),
+                        (&Token::Text(ref __self_0),
+                         &Token::Text(ref __arg_1_0)) =>
+                        true && (*__self_0) == (*__arg_1_0),
+                        _ => true,
+                    }
+                } else { false }
+            }
+        }
+        #[inline]
+        fn ne(&self, __arg_0: &Token) -> bool {
+            {
+                let __self_vi =
+                    unsafe { ::std::intrinsics::discriminant_value(&*self) }
+                        as isize;
+                let __arg_1_vi =
+                    unsafe {
+                        ::std::intrinsics::discriminant_value(&*__arg_0)
+                    } as isize;
+                if true && __self_vi == __arg_1_vi {
+                    match (&*self, &*__arg_0) {
+                        (&Token::Identifier(ref __self_0),
+                         &Token::Identifier(ref __arg_1_0)) =>
+                        false || (*__self_0) != (*__arg_1_0),
+                        (&Token::Number(ref __self_0),
+                         &Token::Number(ref __arg_1_0)) =>
+                        false || (*__self_0) != (*__arg_1_0),
+                        (&Token::Text(ref __self_0),
+                         &Token::Text(ref __arg_1_0)) =>
+                        false || (*__self_0) != (*__arg_1_0),
+                        _ => false,
+                    }
+                } else { true }
+            }
+        }
+    }
+    #[automatically_derived]
+    #[allow(unused_qualifications)]
+    impl ::std::clone::Clone for Token {
+        #[inline]
+        fn clone(&self) -> Token {
+            match (&*self,) {
+                (&Token::Class,) => Token::Class,
+                (&Token::Public,) => Token::Public,
+                (&Token::Static,) => Token::Static,
+                (&Token::This,) => Token::This,
+                (&Token::New,) => Token::New,
+                (&Token::Void,) => Token::Void,
+                (&Token::Main,) => Token::Main,
+                (&Token::STRING,) => Token::STRING,
+                (&Token::Extends,) => Token::Extends,
+                (&Token::If,) => Token::If,
+                (&Token::Else,) => Token::Else,
+                (&Token::While,) => Token::While,
+                (&Token::Return,) => Token::Return,
+                (&Token::Println,) => Token::Println,
+                (&Token::True,) => Token::True,
+                (&Token::False,) => Token::False,
+                (&Token::Length,) => Token::Length,
+                (&Token::Int,) => Token::Int,
+                (&Token::Boolean,) => Token::Boolean,
+                (&Token::Delimiter,) => Token::Delimiter,
+                (&Token::OpBrace,) => Token::OpBrace,
+                (&Token::ClBrace,) => Token::ClBrace,
+                (&Token::OpBracket,) => Token::OpBracket,
+                (&Token::ClBracket,) => Token::ClBracket,
+                (&Token::OpParethesis,) => Token::OpParethesis,
+                (&Token::ClParethesis,) => Token::ClParethesis,
+                (&Token::Comma,) => Token::Comma,
+                (&Token::Dot,) => Token::Dot,
+                (&Token::And,) => Token::And,
+                (&Token::Less,) => Token::Less,
+                (&Token::Add,) => Token::Add,
+                (&Token::Sub,) => Token::Sub,
+                (&Token::Mul,) => Token::Mul,
+                (&Token::Not,) => Token::Not,
+                (&Token::Assign,) => Token::Assign,
+                (&Token::Identifier(ref __self_0),) =>
+                Token::Identifier(::std::clone::Clone::clone(&(*__self_0))),
+                (&Token::Number(ref __self_0),) =>
+                Token::Number(::std::clone::Clone::clone(&(*__self_0))),
+                (&Token::Text(ref __self_0),) =>
+                Token::Text(::std::clone::Clone::clone(&(*__self_0))),
+            }
+        }
+    }
+    #[automatically_derived]
+    #[allow(unused_qualifications)]
+    impl ::std::fmt::Debug for Token {
+        fn fmt(&self, __arg_0: &mut ::std::fmt::Formatter)
+         -> ::std::fmt::Result {
+            match (&*self,) {
+                (&Token::Class,) => {
+                    let mut builder = __arg_0.debug_tuple("Class");
+                    builder.finish()
+                }
+                (&Token::Public,) => {
+                    let mut builder = __arg_0.debug_tuple("Public");
+                    builder.finish()
+                }
+                (&Token::Static,) => {
+                    let mut builder = __arg_0.debug_tuple("Static");
+                    builder.finish()
+                }
+                (&Token::This,) => {
+                    let mut builder = __arg_0.debug_tuple("This");
+                    builder.finish()
+                }
+                (&Token::New,) => {
+                    let mut builder = __arg_0.debug_tuple("New");
+                    builder.finish()
+                }
+                (&Token::Void,) => {
+                    let mut builder = __arg_0.debug_tuple("Void");
+                    builder.finish()
+                }
+                (&Token::Main,) => {
+                    let mut builder = __arg_0.debug_tuple("Main");
+                    builder.finish()
+                }
+                (&Token::STRING,) => {
+                    let mut builder = __arg_0.debug_tuple("STRING");
+                    builder.finish()
+                }
+                (&Token::Extends,) => {
+                    let mut builder = __arg_0.debug_tuple("Extends");
+                    builder.finish()
+                }
+                (&Token::If,) => {
+                    let mut builder = __arg_0.debug_tuple("If");
+                    builder.finish()
+                }
+                (&Token::Else,) => {
+                    let mut builder = __arg_0.debug_tuple("Else");
+                    builder.finish()
+                }
+                (&Token::While,) => {
+                    let mut builder = __arg_0.debug_tuple("While");
+                    builder.finish()
+                }
+                (&Token::Return,) => {
+                    let mut builder = __arg_0.debug_tuple("Return");
+                    builder.finish()
+                }
+                (&Token::Println,) => {
+                    let mut builder = __arg_0.debug_tuple("Println");
+                    builder.finish()
+                }
+                (&Token::True,) => {
+                    let mut builder = __arg_0.debug_tuple("True");
+                    builder.finish()
+                }
+                (&Token::False,) => {
+                    let mut builder = __arg_0.debug_tuple("False");
+                    builder.finish()
+                }
+                (&Token::Length,) => {
+                    let mut builder = __arg_0.debug_tuple("Length");
+                    builder.finish()
+                }
+                (&Token::Int,) => {
+                    let mut builder = __arg_0.debug_tuple("Int");
+                    builder.finish()
+                }
+                (&Token::Boolean,) => {
+                    let mut builder = __arg_0.debug_tuple("Boolean");
+                    builder.finish()
+                }
+                (&Token::Delimiter,) => {
+                    let mut builder = __arg_0.debug_tuple("Delimiter");
+                    builder.finish()
+                }
+                (&Token::OpBrace,) => {
+                    let mut builder = __arg_0.debug_tuple("OpBrace");
+                    builder.finish()
+                }
+                (&Token::ClBrace,) => {
+                    let mut builder = __arg_0.debug_tuple("ClBrace");
+                    builder.finish()
+                }
+                (&Token::OpBracket,) => {
+                    let mut builder = __arg_0.debug_tuple("OpBracket");
+                    builder.finish()
+                }
+                (&Token::ClBracket,) => {
+                    let mut builder = __arg_0.debug_tuple("ClBracket");
+                    builder.finish()
+                }
+                (&Token::OpParethesis,) => {
+                    let mut builder = __arg_0.debug_tuple("OpParethesis");
+                    builder.finish()
+                }
+                (&Token::ClParethesis,) => {
+                    let mut builder = __arg_0.debug_tuple("ClParethesis");
+                    builder.finish()
+                }
+                (&Token::Comma,) => {
+                    let mut builder = __arg_0.debug_tuple("Comma");
+                    builder.finish()
+                }
+                (&Token::Dot,) => {
+                    let mut builder = __arg_0.debug_tuple("Dot");
+                    builder.finish()
+                }
+                (&Token::And,) => {
+                    let mut builder = __arg_0.debug_tuple("And");
+                    builder.finish()
+                }
+                (&Token::Less,) => {
+                    let mut builder = __arg_0.debug_tuple("Less");
+                    builder.finish()
+                }
+                (&Token::Add,) => {
+                    let mut builder = __arg_0.debug_tuple("Add");
+                    builder.finish()
+                }
+                (&Token::Sub,) => {
+                    let mut builder = __arg_0.debug_tuple("Sub");
+                    builder.finish()
+                }
+                (&Token::Mul,) => {
+                    let mut builder = __arg_0.debug_tuple("Mul");
+                    builder.finish()
+                }
+                (&Token::Not,) => {
+                    let mut builder = __arg_0.debug_tuple("Not");
+                    builder.finish()
+                }
+                (&Token::Assign,) => {
+                    let mut builder = __arg_0.debug_tuple("Assign");
+                    builder.finish()
+                }
+                (&Token::Identifier(ref __self_0),) => {
+                    let mut builder = __arg_0.debug_tuple("Identifier");
+                    let _ = builder.field(&&(*__self_0));
+                    builder.finish()
+                }
+                (&Token::Number(ref __self_0),) => {
+                    let mut builder = __arg_0.debug_tuple("Number");
+                    let _ = builder.field(&&(*__self_0));
+                    builder.finish()
+                }
+                (&Token::Text(ref __self_0),) => {
+                    let mut builder = __arg_0.debug_tuple("Text");
+                    let _ = builder.field(&&(*__self_0));
+                    builder.finish()
+                }
+            }
+        }
+    }
+    pub fn tokenize(input: &str) -> Vec<Token> {
+        let comment_re =
+            Regex::new(r"(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)").unwrap();
+        let preprocessed = comment_re.replace_all(input, "");
+        let mut result = Vec::new();
+        let token_re =
+            Regex::new("(?P<println>System\\.out\\.println)|(?P<identifier>\\p{Alphabetic}\\w*)|(?P<text>\".*?\")|(?P<number>\\d+)|(?P<delimiter>;)|(?P<opbrace>\\{)|(?P<clbrace>\\})|(?P<opbracket>\\[)|(?P<clbracket>\\])|(?P<opparethesis>\\()|(?P<clparethesis>\\))|(?P<comma>,)|(?P<dot>\\.)|(?P<operator>&&|<|\\+|-|\\*|!|=)").unwrap();
+        for cap in token_re.captures_iter(preprocessed.into_owned().as_str())
+            {
+            let token =
+                if cap.name("identifier").is_some() {
+                    match cap.name("identifier").unwrap().as_str() {
+                        "class" => Token::Class,
+                        "public" => Token::Public,
+                        "static" => Token::Static,
+                        "this" => Token::This,
+                        "new" => Token::New,
+                        "void" => Token::Void,
+                        "main" => Token::Main,
+                        "String" => Token::STRING,
+                        "extends" => Token::Extends,
+                        "if" => Token::If,
+                        "else" => Token::Else,
+                        "while" => Token::While,
+                        "return" => Token::Return,
+                        "System.out.println" => Token::Println,
+                        "true" => Token::True,
+                        "false" => Token::False,
+                        "length" => Token::Length,
+                        "int" => Token::Int,
+                        "boolean" => Token::Boolean,
+                        identifier =>
+                        Token::Identifier(identifier.to_string()),
+                    }
+                } else if cap.name("println").is_some() {
+                    Token::Println
+                } else if cap.name("text").is_some() {
+                    Token::Text(cap.name("text").unwrap().as_str().to_string())
+                } else if cap.name("number").is_some() {
+                    match cap.name("number").unwrap().as_str().parse() {
+                        Ok(number) => Token::Number(number),
+                        Err(_) => {
+                            $crate::rt::begin_panic("Lexer failed trying to parse number",
+                                                    {
+                                                        static _FILE_LINE:
+                                                               (&'static str,
+                                                                u32) =
+                                                            ("lexer.rs",
+                                                             100u32);
+                                                        &_FILE_LINE
+                                                    })
+                        }
+                    }
+                } else if cap.name("delimiter").is_some() {
+                    Token::Delimiter
+                } else if cap.name("opbrace").is_some() {
+                    Token::OpBrace
+                } else if cap.name("clbrace").is_some() {
+                    Token::ClBrace
+                } else if cap.name("opbracket").is_some() {
+                    Token::OpBracket
+                } else if cap.name("clbracket").is_some() {
+                    Token::ClBracket
+                } else if cap.name("opparethesis").is_some() {
+                    Token::OpParethesis
+                } else if cap.name("clparethesis").is_some() {
+                    Token::ClParethesis
+                } else if cap.name("comma").is_some() {
+                    Token::Comma
+                } else if cap.name("dot").is_some() {
+                    Token::Dot
+                } else if cap.name("operator").is_some() {
+                    match cap.name("operator").unwrap().as_str() {
+                        "&&" => Token::And,
+                        "<" => Token::Less,
+                        "+" => Token::Add,
+                        "-" => Token::Sub,
+                        "*" => Token::Mul,
+                        "!" => Token::Not,
+                        "=" => Token::Assign,
+                        x => {
+                            $crate::rt::begin_panic_fmt(&::std::fmt::Arguments::new_v1({
+                                                                                           static __STATIC_FMTSTR:
+                                                                                                  &'static [&'static str]
+                                                                                                  =
+                                                                                               &["Unexpected invalid token "];
+                                                                                           __STATIC_FMTSTR
+                                                                                       },
+                                                                                       &match (&x,)
+                                                                                            {
+                                                                                            (__arg0,)
+                                                                                            =>
+                                                                                            [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                                         ::std::fmt::Debug::fmt)],
+                                                                                        }),
+                                                        {
+                                                            static _FILE_LINE:
+                                                                   (&'static str,
+                                                                    u32) =
+                                                                ("lexer.rs",
+                                                                 129u32);
+                                                            &_FILE_LINE
+                                                        })
+                        }
+                    }
+                } else {
+                    {
+                        $crate::rt::begin_panic("Unexpected invalid text",
+                                                {
+                                                    static _FILE_LINE:
+                                                           (&'static str, u32)
+                                                           =
+                                                        ("lexer.rs", 132u32);
+                                                    &_FILE_LINE
+                                                })
+                    };
+                };
+            result.push(token);
+        }
+        result
+    }
+}
+mod parser {
+    use lexer::*;
+    enum BinaryOp { And, Less, Add, Sub, Mul, }
+    struct Identifier {
+        name: String,
+    }
+    enum Type { Array_T, Bool_T, Integer_T, Class_T, }
+    enum Expression {
+        BinaryExpression(BinaryOp, Box<Expression>, Box<Expression>),
+        ArrayIndexExpression(Box<Expression>, Box<Expression>),
+        ArrayLengthExpression(Box<Expression>),
+        FuncCallExpression(Box<Expression>, Identifier, Vec<Expression>),
+        ConstantInteger(f64),
+        ConstantBoolean(bool),
+        Identifier,
+        thisExpression,
+        newArrayExpression(Box<Expression>),
+        newExperssion(Identifier),
+        NotExpression(Box<Expression>),
+    }
+    enum Statement {
+        StatementList(Vec<Statement>),
+        IfStatement(Box<Expression>, Box<Statement>, Box<Statement>),
+        WhileStatement(Box<Expression>, Box<Statement>),
+        PrintlnStatement(Box<Expression>),
+        AssignStatement(Identifier, Box<Expression>),
+        ArrayAssignStatement(Identifier, Box<Expression>, Box<Expression>),
+    }
+    struct MainClass {
+        name: String,
+        state: Statement,
+    }
+    pub enum ParsingResult<T> {
+        Good(T, Vec<Token>),
+        NotComplete,
+        Bad(String),
+    }
+    enum ASTNode { MainClass, }
+    fn error<T>(message: &str) -> ParsingResult<T> {
+        ParsingResult::Bad(message.to_string())
+    }
+    pub fn parse(tokens: Vec<Token>) {
+        let mut rest = tokens;
+        rest.reverse();
+        let first_token =
+            match rest.last() {
+                Some(token) => token.clone(),
+                None => return,
+            };
+        match first_token {
+            Token::Class => {
+                match parse_mainclass(&mut rest) {
+                    ParsingResult::Good(ast, parsed_token) =>
+                    $crate::io::_print(::std::fmt::Arguments::new_v1({
+                                                                         static __STATIC_FMTSTR:
+                                                                                &'static [&'static str]
+                                                                                =
+                                                                             &["",
+                                                                               "\n"];
+                                                                         __STATIC_FMTSTR
+                                                                     },
+                                                                     &match (&"Good",)
+                                                                          {
+                                                                          (__arg0,)
+                                                                          =>
+                                                                          [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                       ::std::fmt::Display::fmt)],
+                                                                      })),
+                    ParsingResult::NotComplete =>
+                    $crate::io::_print(::std::fmt::Arguments::new_v1({
+                                                                         static __STATIC_FMTSTR:
+                                                                                &'static [&'static str]
+                                                                                =
+                                                                             &["",
+                                                                               "\n"];
+                                                                         __STATIC_FMTSTR
+                                                                     },
+                                                                     &match (&"NotComplete",)
+                                                                          {
+                                                                          (__arg0,)
+                                                                          =>
+                                                                          [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                       ::std::fmt::Display::fmt)],
+                                                                      })),
+                    ParsingResult::Bad(message) =>
+                    $crate::io::_print(::std::fmt::Arguments::new_v1({
+                                                                         static __STATIC_FMTSTR:
+                                                                                &'static [&'static str]
+                                                                                =
+                                                                             &["",
+                                                                               "\n"];
+                                                                         __STATIC_FMTSTR
+                                                                     },
+                                                                     &match (&message,)
+                                                                          {
+                                                                          (__arg0,)
+                                                                          =>
+                                                                          [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                       ::std::fmt::Display::fmt)],
+                                                                      })),
+                };
+            }
+            _ => {
+                $crate::rt::begin_panic("The first token should be \"class\"",
+                                        {
+                                            static _FILE_LINE:
+                                                   (&'static str, u32) =
+                                                ("parser.rs", 83u32);
+                                            &_FILE_LINE
+                                        })
+            }
+        };
+    }
+    fn parse_mainclass(tokens: &mut Vec<Token>) -> ParsingResult<ASTNode> {
+        tokens.pop();
+        let mut parsed_tokens = Vec::new();
+        let name =
+            match tokens.pop() {
+                Some(Token::Identifier(name)) => {
+                    parsed_tokens.push(Token::Identifier(name.clone()));
+                    name
+                }
+                None => {
+                    parsed_tokens.reverse();
+                    tokens.extend(parsed_tokens.into_iter());
+                    return ParsingResult::NotComplete;
+                }
+                _ =>
+                return error("expected class name in main class declaration"),
+            };
+        match tokens.pop() {
+            Some(Token::OpBrace) => { parsed_tokens.push(Token::OpBrace); () }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ => return error("expected \'{\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::Public) => { parsed_tokens.push(Token::Public); () }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ =>
+            return error("expected \'public\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::Static) => { parsed_tokens.push(Token::Static); () }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ =>
+            return error("expected \'static\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::Void) => { parsed_tokens.push(Token::Void); () }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ => return error("expected \'void\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::Main) => { parsed_tokens.push(Token::Main); () }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ => return error("expected \'main\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::OpParethesis) => {
+                parsed_tokens.push(Token::OpParethesis);
+                ()
+            }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ => return error("expected \'(\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::STRING) => { parsed_tokens.push(Token::STRING); () }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ =>
+            return error("expected \'String\' in main class declaration"),
+        };
+        match tokens.pop() {
+            Some(Token::OpBracket) => {
+                parsed_tokens.push(Token::OpBracket);
+                ()
+            }
+            None => {
+                parsed_tokens.reverse();
+                tokens.extend(parsed_tokens.into_iter());
+                return ParsingResult::NotComplete;
+            }
+            _ => return error("expected \'[]\' in main class declaration"),
+        };
+        return ParsingResult::NotComplete;
+    }
+    fn parse_statement(tokens: &mut Vec<Token>) { }
+}
+use docopt::Docopt;
+use std::error::Error;
+use std::fs::File;
+use std::io::Read;
+use lexer::*;
+use parser::*;
+const USAGE: &'static str =
+    "\nUsage: \n    mj2llvm [-l | -p | -i] [--verbose] <source>\n\nOptions:\n    -l  Run only lexer and show its output.\n    -p  Run only parser and show its output.\n    -i  Run only IR builder and show its output.\n";
+struct Args {
+    flag_l: bool,
+    flag_p: bool,
+    flag_i: bool,
+    flag_verbose: bool,
+    arg_source: String,
+}
+#[automatically_derived]
+#[allow(unused_qualifications)]
+impl ::std::fmt::Debug for Args {
+    fn fmt(&self, __arg_0: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        match *self {
+            Args {
+            flag_l: ref __self_0_0,
+            flag_p: ref __self_0_1,
+            flag_i: ref __self_0_2,
+            flag_verbose: ref __self_0_3,
+            arg_source: ref __self_0_4 } => {
+                let mut builder = __arg_0.debug_struct("Args");
+                let _ = builder.field("flag_l", &&(*__self_0_0));
+                let _ = builder.field("flag_p", &&(*__self_0_1));
+                let _ = builder.field("flag_i", &&(*__self_0_2));
+                let _ = builder.field("flag_verbose", &&(*__self_0_3));
+                let _ = builder.field("arg_source", &&(*__self_0_4));
+                builder.finish()
+            }
+        }
+    }
+}
+#[automatically_derived]
+#[allow(unused_qualifications)]
+impl ::rustc_serialize::Decodable for Args {
+    fn decode<__D: ::rustc_serialize::Decoder>(__arg_0: &mut __D)
+     -> ::std::result::Result<Args, __D::Error> {
+        __arg_0.read_struct("Args", 5usize, |_d| -> _ {
+                            ::std::result::Result::Ok(Args{flag_l:
+                                                               match _d.read_struct_field("flag_l",
+                                                                                          0usize,
+                                                                                          ::rustc_serialize::Decodable::decode)
+                                                                   {
+                                                                   ::std::result::Result::Ok(__try_var)
+                                                                   =>
+                                                                   __try_var,
+                                                                   ::std::result::Result::Err(__try_var)
+                                                                   =>
+                                                                   return ::std::result::Result::Err(__try_var),
+                                                               },
+                                                           flag_p:
+                                                               match _d.read_struct_field("flag_p",
+                                                                                          1usize,
+                                                                                          ::rustc_serialize::Decodable::decode)
+                                                                   {
+                                                                   ::std::result::Result::Ok(__try_var)
+                                                                   =>
+                                                                   __try_var,
+                                                                   ::std::result::Result::Err(__try_var)
+                                                                   =>
+                                                                   return ::std::result::Result::Err(__try_var),
+                                                               },
+                                                           flag_i:
+                                                               match _d.read_struct_field("flag_i",
+                                                                                          2usize,
+                                                                                          ::rustc_serialize::Decodable::decode)
+                                                                   {
+                                                                   ::std::result::Result::Ok(__try_var)
+                                                                   =>
+                                                                   __try_var,
+                                                                   ::std::result::Result::Err(__try_var)
+                                                                   =>
+                                                                   return ::std::result::Result::Err(__try_var),
+                                                               },
+                                                           flag_verbose:
+                                                               match _d.read_struct_field("flag_verbose",
+                                                                                          3usize,
+                                                                                          ::rustc_serialize::Decodable::decode)
+                                                                   {
+                                                                   ::std::result::Result::Ok(__try_var)
+                                                                   =>
+                                                                   __try_var,
+                                                                   ::std::result::Result::Err(__try_var)
+                                                                   =>
+                                                                   return ::std::result::Result::Err(__try_var),
+                                                               },
+                                                           arg_source:
+                                                               match _d.read_struct_field("arg_source",
+                                                                                          4usize,
+                                                                                          ::rustc_serialize::Decodable::decode)
+                                                                   {
+                                                                   ::std::result::Result::Ok(__try_var)
+                                                                   =>
+                                                                   __try_var,
+                                                                   ::std::result::Result::Err(__try_var)
+                                                                   =>
+                                                                   return ::std::result::Result::Err(__try_var),
+                                                               },}) })
+    }
+}
+fn main() {
+    let args: Args =
+        Docopt::new(USAGE).and_then(|d|
+                                        d.decode()).unwrap_or_else(|e|
+                                                                       e.exit());
+    let mut file =
+        match File::open(&args.arg_source) {
+            Err(why) => {
+                $crate::rt::begin_panic_fmt(&::std::fmt::Arguments::new_v1({
+                                                                               static __STATIC_FMTSTR:
+                                                                                      &'static [&'static str]
+                                                                                      =
+                                                                                   &["couldn\'t open ",
+                                                                                     ": "];
+                                                                               __STATIC_FMTSTR
+                                                                           },
+                                                                           &match (&args.arg_source,
+                                                                                   &why.description())
+                                                                                {
+                                                                                (__arg0,
+                                                                                 __arg1)
+                                                                                =>
+                                                                                [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                             ::std::fmt::Display::fmt),
+                                                                                 ::std::fmt::ArgumentV1::new(__arg1,
+                                                                                                             ::std::fmt::Display::fmt)],
+                                                                            }),
+                                            {
+                                                static _FILE_LINE:
+                                                       (&'static str, u32) =
+                                                    ("main.rs", 42u32);
+                                                &_FILE_LINE
+                                            })
+            }
+            Ok(file) => {
+                if args.flag_verbose {
+                    $crate::io::_print(::std::fmt::Arguments::new_v1({
+                                                                         static __STATIC_FMTSTR:
+                                                                                &'static [&'static str]
+                                                                                =
+                                                                             &["Open the file: ",
+                                                                               "\n"];
+                                                                         __STATIC_FMTSTR
+                                                                     },
+                                                                     &match (&args.arg_source,)
+                                                                          {
+                                                                          (__arg0,)
+                                                                          =>
+                                                                          [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                       ::std::fmt::Display::fmt)],
+                                                                      }));
+                }
+                file
+            }
+        };
+    let mut s = String::new();
+    match file.read_to_string(&mut s) {
+        Err(why) => {
+            $crate::rt::begin_panic_fmt(&::std::fmt::Arguments::new_v1({
+                                                                           static __STATIC_FMTSTR:
+                                                                                  &'static [&'static str]
+                                                                                  =
+                                                                               &["couldn\'t read ",
+                                                                                 ": "];
+                                                                           __STATIC_FMTSTR
+                                                                       },
+                                                                       &match (&args.arg_source,
+                                                                               &why.description())
+                                                                            {
+                                                                            (__arg0,
+                                                                             __arg1)
+                                                                            =>
+                                                                            [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                         ::std::fmt::Display::fmt),
+                                                                             ::std::fmt::ArgumentV1::new(__arg1,
+                                                                                                         ::std::fmt::Display::fmt)],
+                                                                        }),
+                                        {
+                                            static _FILE_LINE:
+                                                   (&'static str, u32) =
+                                                ("main.rs", 54u32);
+                                            &_FILE_LINE
+                                        })
+        }
+        Ok(_) => {
+            if args.flag_verbose {
+                $crate::io::_print(::std::fmt::Arguments::new_v1({
+                                                                     static __STATIC_FMTSTR:
+                                                                            &'static [&'static str]
+                                                                            =
+                                                                         &["Read the file: ",
+                                                                           "\n"];
+                                                                     __STATIC_FMTSTR
+                                                                 },
+                                                                 &match (&args.arg_source,)
+                                                                      {
+                                                                      (__arg0,)
+                                                                      =>
+                                                                      [::std::fmt::ArgumentV1::new(__arg0,
+                                                                                                   ::std::fmt::Display::fmt)],
+                                                                  }));
+            }
+        }
+    }
+    let tokens = tokenize(s.as_str());
+    parse(tokens);
+}
