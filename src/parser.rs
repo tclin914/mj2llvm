@@ -229,7 +229,8 @@ fn parse_assign_statement(tokens: &mut Vec<Token>) -> ParsingResult<Statement> {
 }
 
 fn parse_expression(tokens: &mut Vec<Token>) -> ParsingResult<Expression> {
-    match tokens.last() {
+    
+    let expr = match tokens.last() {
         Some(&Token::Number(_)) => parse_literal_expression(tokens),
         Some(&Token::True) => parse_true_expression(tokens),
         Some(&Token::False) => parse_false_expression(tokens),
@@ -239,8 +240,17 @@ fn parse_expression(tokens: &mut Vec<Token>) -> ParsingResult<Expression> {
         // Some(&Token::Not) => parse_not_expression(tokens),
         None => return NotComplete,
         _ => error("unknown token when expecting a expression")
-    }   
-
+    };   
+ 
+    match expr {
+        Good(expr, toks) => {
+            Good(expr, toks)
+        },
+        NotComplete => {
+            return NotComplete
+        },
+        Bad(message) => return Bad(message)
+    }
 }
 
 fn parse_literal_expression(tokens: &mut Vec<Token>) -> ParsingResult<Expression> {
@@ -275,7 +285,7 @@ fn parse_identifier_expression(tokens: &mut Vec<Token>) -> ParsingResult<Express
 
     let name = expect_token!([Token::Identifier(name), Token::Identifier(name.clone()), name]
         <= tokens, parsed_tokens, "identifier expected");
-
+    
     Good(Expression::Identifier(name), parsed_tokens)
 }
 
@@ -340,8 +350,7 @@ fn parse_newarray_expression(tokens: &mut Vec<Token>) -> ParsingResult<Expressio
     expect_token!([Token::ClBracket, Token::ClBracket, ()]
         <= tokens, parsed_tokens, "']' expected in constructing a integer array");
 
-    // Good(Expression::NewArrayExpression(expr), parsed_tokens)
-    NotComplete
+    Good(Expression::NewArrayExpression(Box::new(expr)), parsed_tokens)
 }
 
 fn parse_new_expression(tokens: &mut Vec<Token>) -> ParsingResult<Expression> {
